@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Supermarket.API.Domain.Models;
 using Supermarket.API.Domain.Services;
+using Supermarket.API.Extensions;
 using Supermarket.API.Resources;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -37,11 +38,48 @@ namespace Supermarket.API.Controllers
         {
             if (!ModelState.IsValid)
             {
-                return BadRequest();
+                return BadRequest(ModelState.GetMessages());
             }
 
-            // TODO: Implement Category Creation
-            
+            var category = _mapper.Map<SaveCategoryResource, Category>(resource);
+            var result = await _categoryService.SaveAsync(category);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var categoryResource = _mapper.Map<Category, CategoryResource>(result.Resource);
+
+            return Ok(categoryResource);
+        }
+
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutAsync(int id, [FromBody] SaveCategoryResource resource)
+        {
+            var category = _mapper.Map<SaveCategoryResource, Category>(resource);
+            var result = await _categoryService.UpdateAsync(id, category);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+
+            var categoryResource = _mapper.Map<Category, CategoryResource>(result.Resource);
+            return Ok(categoryResource);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteAsync(int id)
+        {
+            var result = await _categoryService.DeleteAsync(id);
+
+            if (!result.Success)
+            {
+                return BadRequest(result.Message);
+            }
+            var categoryResource = _mapper.Map<Category, CategoryResource>(result.Resource);
+            return Ok(categoryResource);
         }
     }
 }

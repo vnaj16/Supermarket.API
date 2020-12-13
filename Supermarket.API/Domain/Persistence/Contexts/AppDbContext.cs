@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Supermarket.API.Domain.Models;
+using Supermarket.API.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -49,6 +50,9 @@ namespace Supermarket.API.Domain.Persistence.Contexts
             builder.Entity<Product>().Property(p => p.QuantityInPackage).IsRequired();
             builder.Entity<Product>().Property(p => p.UnitOfMeasurement).IsRequired();
             #endregion
+
+            //Apply Naming Conventions Policy
+            builder.ApplySnakeCaseNamingConvention();
         }
     }
 }

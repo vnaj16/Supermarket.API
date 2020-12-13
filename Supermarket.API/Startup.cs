@@ -41,6 +41,7 @@ namespace Supermarket.API
             //Colocar esto despues en un archivo Midleware con una extend function
             services.AddScoped<ICategoryRepository, CategoryRepository>();
             services.AddScoped<ICategoryService, CategoryService>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
             services.AddAutoMapper(typeof(Startup));
         }
