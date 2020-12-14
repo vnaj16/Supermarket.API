@@ -12,6 +12,8 @@ namespace Supermarket.API.Domain.Persistence.Contexts
     {
         public DbSet<Category> Categories { get; set; }
         public DbSet<Product> Products { get; set; }
+        public DbSet<Tag> Tags { get; set; }
+        public DbSet<ProductTag> ProductTags { get; set; }
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
 
@@ -49,6 +51,30 @@ namespace Supermarket.API.Domain.Persistence.Contexts
                 IsRequired().HasMaxLength(50);
             builder.Entity<Product>().Property(p => p.QuantityInPackage).IsRequired();
             builder.Entity<Product>().Property(p => p.UnitOfMeasurement).IsRequired();
+            #endregion
+
+            #region Tag Entity
+            builder.Entity<Tag>().ToTable("Tags");
+            builder.Entity<Tag>().HasKey(t => t.Id);
+            builder.Entity<Tag>().Property(t => t.Id)
+                .IsRequired().ValueGeneratedOnAdd();
+            builder.Entity<Tag>().Property(t => t.Name)
+                .IsRequired().HasMaxLength(30);
+            #endregion
+
+            #region ProducTag Entity
+            builder.Entity<ProductTag>().ToTable("ProductTags");
+            builder.Entity<ProductTag>()
+                .HasKey(pt => new { pt.ProductId, pt.TagId });
+            builder.Entity<ProductTag>()
+                .HasOne(pt => pt.Product)
+                .WithMany(p => p.ProductTags)
+                .HasForeignKey(pt => pt.ProductId);
+
+            builder.Entity<ProductTag>()
+                .HasOne(pt => pt.Tag)
+                .WithMany(t => t.ProductTags)
+                .HasForeignKey(pt => pt.TagId);
             #endregion
 
             //Apply Naming Conventions Policy
