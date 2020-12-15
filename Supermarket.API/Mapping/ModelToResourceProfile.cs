@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Supermarket.API.Domain.Models;
+using Supermarket.API.Extensions;
 using Supermarket.API.Resources;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,11 @@ namespace Supermarket.API.Mapping
             //Como no se le indica nada mas, su default behavior es que el solito va a mapear de esta forma
                 //En el origen hay un Id, en el destino tambien, se mapean esas, si hay un Name y en el origen hay un Name, se mapea
             CreateMap<Category, CategoryResource>();
+
+            CreateMap<Product, ProductResource>()
+                .ForMember(src => src.UnitOfMeasurement, 
+                opt => opt.MapFrom(src => src.UnitOfMeasurement
+                .ToDescriptionString()));
         }
     }
 }

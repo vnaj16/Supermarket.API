@@ -11,10 +11,10 @@ namespace Supermarket.API.Domain.Repositories
         Task<IEnumerable<ProductTag>> ListAsync();
         Task<IEnumerable<ProductTag>> ListByProductIdAsync(int productId);
         Task<IEnumerable<ProductTag>> ListByTagIdAsync(int tagId);
-        Task<IEnumerable<ProductTag>> FindByProductIdAndTagId(int productId, int tagId);
+        Task<ProductTag> FindByProductIdAndTagId(int productId, int tagId);
         Task AddAsync(ProductTag productTag);
         void Remove(ProductTag productTag);
-        Task AssignProducTTag(int productId, int tagId);
-        void UnassignProducTTag(int productId, int tagId);
+        Task AssignProductTag(int productId, int tagId);
+        void UnassignProductTag(int productId, int tagId);
     }
 }

@@ -1,4 +1,5 @@
-﻿using Supermarket.API.Domain.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using Supermarket.API.Domain.Models;
 using Supermarket.API.Domain.Persistence.Contexts;
 using Supermarket.API.Domain.Repositories;
 using System;
@@ -14,44 +15,65 @@ namespace Supermarket.API.Persistence.Repositories
         {
         }
 
-        public Task AddAsync(ProductTag productTag)
+        public async Task AddAsync(ProductTag productTag)
         {
-            throw new NotImplementedException();
+            await _context.ProductTags.AddAsync(productTag);
         }
 
-        public Task AssignProducTTag(int productId, int tagId)
+        public async Task AssignProductTag(int productId, int tagId)
         {
-            throw new NotImplementedException();
+            ProductTag productTag = await FindByProductIdAndTagId(productId, tagId);
+        
+            if(productTag == null)
+            {
+                productTag = new ProductTag { ProductId = productId, TagId = tagId };
+                await AddAsync(productTag);
+            }
         }
 
-        public Task<IEnumerable<ProductTag>> FindByProductIdAndTagId(int productId, int tagId)
+        public async Task<ProductTag> FindByProductIdAndTagId(int productId, int tagId)
         {
-            throw new NotImplementedException();
+            return await _context.ProductTags.FindAsync(productId, tagId);
         }
 
-        public Task<IEnumerable<ProductTag>> ListAsync()
+        public async Task<IEnumerable<ProductTag>> ListAsync()
         {
-            throw new NotImplementedException();
+            return await _context.ProductTags.Include(pt => pt.Product)
+                .Include(pt => pt.Tag)
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<ProductTag>> ListByProductIdAsync(int productId)
+        public async Task<IEnumerable<ProductTag>> ListByProductIdAsync(int productId)
         {
-            throw new NotImplementedException();
+            return await _context.ProductTags
+                .Where(pt => pt.ProductId == productId)
+                .Include(pt => pt.Product)
+                .Include(pt => pt.Tag)
+                .ToListAsync();
         }
 
-        public Task<IEnumerable<ProductTag>> ListByTagIdAsync(int tagId)
+        public async Task<IEnumerable<ProductTag>> ListByTagIdAsync(int tagId)
         {
-            throw new NotImplementedException();
+            return await _context.ProductTags
+                    .Where(pt => pt.TagId == tagId)
+                    .Include(pt => pt.Product)
+                    .Include(pt => pt.Tag)
+                    .ToListAsync();
         }
 
         public void Remove(ProductTag productTag)
         {
-            throw new NotImplementedException();
+            _context.ProductTags.Remove(productTag);
         }
 
-        public void UnassignProducTTag(int productId, int tagId)
+        public async  void UnassignProductTag(int productId, int tagId)
         {
-            throw new NotImplementedException();
+            ProductTag productTag = await FindByProductIdAndTagId(productId, tagId);
+
+            if (productTag != null)
+            {
+                Remove(productTag);
+            }
         }
     }
 }
