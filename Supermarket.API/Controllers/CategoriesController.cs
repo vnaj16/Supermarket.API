@@ -8,11 +8,14 @@ using Supermarket.API.Domain.Models;
 using Supermarket.API.Domain.Services;
 using Supermarket.API.Extensions;
 using Supermarket.API.Resources;
+using Swashbuckle.AspNetCore.Annotations;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
 namespace Supermarket.API.Controllers
 {
+    [ApiController]
+    [Produces("application/json")]
     [Route("api/[controller]")]
     public class CategoriesController : ControllerBase
     {
@@ -25,7 +28,14 @@ namespace Supermarket.API.Controllers
             _mapper = mapper;
         }
 
+        [SwaggerOperation(
+            Summary ="List all categories",
+            Description = "List of Categories",
+            OperationId = "ListAllCategories",
+            Tags = new[] { "Categories"})]
+        [SwaggerResponse(200,"List of categories", typeof(IEnumerable<CategoryResource>))]
         [HttpGet]
+        [ProducesResponseType(typeof(IEnumerable<CategoryResource>),200)]
         public async Task<IEnumerable<CategoryResource>> GetAllSync()
         {
             var categories = await _categoryService.ListAsync();
@@ -34,7 +44,7 @@ namespace Supermarket.API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostAsync(SaveCategoryResource resource)
+        public async Task<IActionResult> PostAsync([FromBody] SaveCategoryResource resource)
         {
             if (!ModelState.IsValid)
             {
